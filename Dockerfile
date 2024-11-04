@@ -1,5 +1,5 @@
 ARG OPENVDS_IMAGE=openvds
-ARG VDSSLICE_BASEIMAGE=golang:1.22-alpine
+ARG VDSSLICE_BASEIMAGE=docker.io/library/golang:1.22-alpine
 FROM ${VDSSLICE_BASEIMAGE} as openvds
 RUN apk --no-cache add \
     git \
