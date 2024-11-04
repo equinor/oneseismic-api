@@ -5,6 +5,8 @@ kind: RadixApplication
 metadata:
   name: oneseismictest
 spec:
+  build:
+    useBuildKit: true
   environments:
     - name: test
       build:
@@ -12,6 +14,8 @@ spec:
   components:
     - name: server
       dockerfileName: Dockerfile
+      runtime:
+        architecture: amd64
       ports:
         - name: http
           port: 8080
@@ -33,6 +37,7 @@ spec:
             VDSSLICE_TRUSTED_PROXIES: ""
             VDSSLICE_BLOCKED_IPS: ""
             VDSSLICE_BLOCKED_USER_AGENTS: ""
+            OPENVDS_AZURE_IOMANAGER_THREAD_COUNT: ""
           secretRefs:
             azureKeyVaults:
               - name: S067-RadixKeyvault
@@ -43,8 +48,8 @@ spec:
           monitoring: true
           resources:
             requests:
-              memory: "500Mi"
-              cpu: "200m"
+              memory: "8000Mi"
+              cpu: "2000m"
           horizontalScaling:
             minReplicas: 1
             maxReplicas: 1
