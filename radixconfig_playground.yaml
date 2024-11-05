@@ -15,7 +15,7 @@ spec:
     - name: server
       dockerfileName: Dockerfile
       runtime:
-        architecture: arm64
+        architecture: amd64
       ports:
         - name: http
           port: 8080
@@ -48,7 +48,7 @@ spec:
           monitoring: true
           resources:
             requests:
-              memory: "8000Mi"
+              memory: "8192Mi"
               cpu: "2000m"
           horizontalScaling:
             minReplicas: 1
