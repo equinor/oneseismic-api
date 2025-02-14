@@ -10,7 +10,7 @@ RUN curl \
     -o k6-${k6_version}.tar.gz
 RUN tar xzf k6-${k6_version}.tar.gz -C k6 --strip-components=1
 
-ENV PATH "$PATH:k6"
+ENV PATH="$PATH:k6"
 
 ARG prometheus_version=2.50.1
 RUN mkdir prometheus
@@ -19,10 +19,10 @@ RUN curl \
     -o prometheus-${prometheus_version}.tar.gz
 RUN tar xzf prometheus-${prometheus_version}.tar.gz -C prometheus --strip-components=1
 
-ENV PATH "$PATH:prometheus"
+ENV PATH="$PATH:prometheus"
 
 COPY ./tests/utils /tests/utils
 COPY ./tests/performance /tests/performance
 RUN chmod +x /tests/performance/execute.sh
 RUN python -m pip install -r /tests/performance/requirements-dev.txt
-ENV PYTHONPATH "${PYTHONPATH}:/tests"
+ENV PYTHONPATH="${PYTHONPATH}:/tests"

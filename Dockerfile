@@ -1,6 +1,6 @@
 ARG OPENVDS_IMAGE=openvds
 ARG ONESEISMIC_BASEIMAGE=docker.io/library/golang:1.22-alpine
-FROM ${ONESEISMIC_BASEIMAGE} as openvds
+FROM ${ONESEISMIC_BASEIMAGE} AS openvds
 RUN apk --no-cache add \
     git \
     g++ \
@@ -47,7 +47,7 @@ RUN cmake -S . \
 RUN cmake --build build --config ${BUILD_TYPE} --target install -j 8 --verbose
 
 
-FROM $OPENVDS_IMAGE as openvds_snyk_monitor
+FROM $OPENVDS_IMAGE AS openvds_snyk_monitor
 WORKDIR /
 RUN apk --no-cache add curl
 RUN curl --compressed https://downloads.snyk.io/cli/stable/snyk-alpine -o snyk
@@ -56,7 +56,7 @@ WORKDIR /open-vds
 ENTRYPOINT /snyk monitor --unmanaged --remote-repo-url=${SNYK_PROJECT_TAG}
 
 
-FROM $OPENVDS_IMAGE as builder
+FROM $OPENVDS_IMAGE AS builder
 WORKDIR /src
 COPY go.mod go.sum ./
 RUN go mod download && go mod verify
@@ -68,7 +68,7 @@ RUN GOBIN=/tools go install github.com/swaggo/swag/cmd/swag@v1.16.3
 RUN /tools/swag init --dir cmd/query,api/handlers,api/middleware,internal/core -g main.go --md docs
 
 
-FROM builder as tester
+FROM builder AS tester
 ARG CGO_CPPFLAGS="-I/open-vds/Dist/OpenVDS/include"
 ARG CGO_LDFLAGS="-L/open-vds/Dist/OpenVDS/lib"
 ARG LD_LIBRARY_PATH=/open-vds/Dist/OpenVDS/lib:$LD_LIBRARY_PATH
@@ -82,7 +82,7 @@ ARG OPENVDS_AZURESDKFORCPP=1
 RUN go test -race ./...
 
 
-FROM builder as static_analyzer
+FROM builder AS static_analyzer
 ARG CGO_CPPFLAGS="-I/open-vds/Dist/OpenVDS/include"
 ARG CGO_LDFLAGS="-L/open-vds/Dist/OpenVDS/lib"
 ARG STATICCHECK_VERSION="2023.1.7"
@@ -95,13 +95,13 @@ RUN ls && tar xf staticcheck-${STATICCHECK_VERSION}.tar.gz
 RUN ./staticcheck/staticcheck ./...
 
 
-FROM builder as installer
+FROM builder AS installer
 ARG CGO_CPPFLAGS="-I/open-vds/Dist/OpenVDS/include"
 ARG CGO_LDFLAGS="-L/open-vds/Dist/OpenVDS/lib"
 ARG LD_LIBRARY_PATH=/open-vds/Dist/OpenVDS/lib:$LD_LIBRARY_PATH
 RUN GOBIN=/server go install -a ./...
 
-FROM ${ONESEISMIC_BASEIMAGE} as runner
+FROM ${ONESEISMIC_BASEIMAGE} AS runner
 RUN apk --no-cache add \
     jemalloc-dev
 
