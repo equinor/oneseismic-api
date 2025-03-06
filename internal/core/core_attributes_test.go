@@ -1409,3 +1409,53 @@ func TestAttributesInsufficientInterpolationSamples(t *testing.T) {
 		}
 	}
 }
+
+func TestAttributesEmptyArrayParams(t *testing.T) {
+	const above = float32(0)
+	const below = float32(0)
+	const stepsize = float32(4)
+	targetAttributes := []string{}
+	interpolationMethod, _ := GetInterpolationMethod("nearest")
+
+	values := [][]float32{{}}
+	surface := samples10Surface(values)
+
+	goodValues := [][]float32{{20}}
+	goodSurface := samples10Surface(goodValues)
+
+	handle, _ := NewDSHandle(samples10)
+	defer handle.Close()
+
+	_, err := handle.GetAttributesAlongSurface(
+		surface,
+		above,
+		below,
+		stepsize,
+		targetAttributes,
+		interpolationMethod,
+	)
+	require.Errorf(t, err,
+		"Empty surface values didn't throw, err: %v",
+		err,
+	)
+	require.ErrorContainsf(t, err,
+		"Surface should contain at least one value",
+		"Wrong error for empty surface values",
+	)
+
+	_, err = handle.GetAttributesBetweenSurfaces(
+		goodSurface,
+		goodSurface,
+		stepsize,
+		targetAttributes,
+		interpolationMethod,
+	)
+	require.Errorf(t, err,
+		"Empty surface attributes didn't throw, err: %v",
+		err,
+	)
+	require.ErrorContainsf(t, err,
+		"Attributes should contain at least one value",
+		"Wrong error for empty surface attributes",
+	)
+}
