@@ -17,6 +17,12 @@ func (v DSHandle) GetFence(
 	interpolation int,
 	fillValue *float32,
 ) ([]byte, error) {
+
+	if len(coordinates) == 0 {
+		msg := "Coordinates should contain at least one value"
+		return nil, NewInvalidArgument(msg)
+	}
+
 	coordinate_len := 2
 	ccoordinates := make([]C.float, len(coordinates)*coordinate_len)
 	for i := range coordinates {

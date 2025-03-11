@@ -237,6 +237,11 @@ func (v DSHandle) getAttributes(
 	}
 	defer C.subvolume_free(cCtx, cSubVolume)
 
+	if len(targetAttributes) == 0 {
+		msg := "Attributes should contain at least one value"
+		return nil, NewInvalidArgument(msg)
+	}
+
 	cAttributes := make([]C.enum_attribute, len(targetAttributes))
 	for i := range targetAttributes {
 		cAttributes[i] = C.enum_attribute(targetAttributes[i])

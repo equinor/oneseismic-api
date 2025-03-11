@@ -392,6 +392,11 @@ func (surface *RegularSurface) toCRegularSurface(cdata []C.float) (cRegularSurfa
 	nrows := len(surface.Values)
 	ncols := len(surface.Values[0])
 
+	if len(cdata) == 0 {
+		msg := "Surface should contain at least one value"
+		return cRegularSurface{}, NewInvalidArgument(msg)
+	}
+
 	var cCtx = C.context_new()
 	defer C.context_free(cCtx)
 

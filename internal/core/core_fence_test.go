@@ -377,3 +377,22 @@ func TestFenceMetadata(t *testing.T) {
 
 	require.Equal(t, expected, meta)
 }
+
+func TestFenceEmptyArrayParams(t *testing.T) {
+	fence := [][]float32{}
+
+	var fillValue float32 = -999.25
+	interpolationMethod, _ := GetInterpolationMethod("nearest")
+	handle, _ := NewDSHandle(well_known)
+	defer handle.Close()
+	_, err := handle.GetFence(CoordinateSystemIndex, fence, interpolationMethod, &fillValue)
+
+	require.Errorf(t, err,
+		"Empty coordinates didn't throw, err: %v",
+		err,
+	)
+	require.ErrorContainsf(t, err,
+		"Coordinates should contain at least one value",
+		"Wrong error for empty coordinates",
+	)
+}
