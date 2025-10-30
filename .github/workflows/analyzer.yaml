@@ -1,4 +1,5 @@
 name: "Code analyzers"
+permissions: {}
 
 on:
   push:
