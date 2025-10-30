@@ -1,5 +1,5 @@
 ARG OPENVDS_IMAGE=openvds
-ARG ONESEISMIC_BASEIMAGE=docker.io/library/golang:1.22-alpine
+ARG ONESEISMIC_BASEIMAGE=docker.io/library/golang:1.24-alpine
 FROM ${ONESEISMIC_BASEIMAGE} AS openvds
 RUN apk --no-cache add \
     git \
@@ -85,7 +85,7 @@ RUN go test -race ./...
 FROM builder AS static_analyzer
 ARG CGO_CPPFLAGS="-I/open-vds/Dist/OpenVDS/include"
 ARG CGO_LDFLAGS="-L/open-vds/Dist/OpenVDS/lib"
-ARG STATICCHECK_VERSION="2023.1.7"
+ARG STATICCHECK_VERSION="2025.1.1"
 ARG LD_LIBRARY_PATH=/open-vds/Dist/OpenVDS/lib:$LD_LIBRARY_PATH
 RUN apk --no-cache add curl
 RUN curl \
