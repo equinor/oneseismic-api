@@ -1,0 +1,51 @@
+name: IaC and container image scans
+description: "Scan IaC configuration files and the generated Docker image for
+  vulnerabilities."
+
+inputs:
+  upload_to_ghas:
+    description: "Upload to GHAS if true, otherwise report in Action"
+  scan_type:
+    description: "Scan type. Options: 'config' or 'image'"
+  image_name:
+    description: Name of image to scan if scan_type is 'image'"
+    required: false
+    default: ""
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Run Trivy vulnerability Scanner (post report within Action)
+      if: inputs.upload_to_ghas != 'true'
+      # Using SHA to pin to latest version as Trivy is a third party tool.
+      # Dependabot will up the version when there are new releases if enabled.
+      uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # equivalent to `v0.33.1`
+      with:
+        scan-type: ${{ inputs.scan_type }}
+        image-ref: "${{ inputs.image_name }}"
+        severity: "CRITICAL,HIGH"
+        format: "table"
+        exit-code: "1"
+        # Skip Dockerfiles in test directories as these are not deployed
+        # anywhere
+        skip-dirs: "tests/"
+
+    - name: Run Trivy vulnerability Scanner (upload report to GitHub security)
+      if: inputs.upload_to_ghas == 'true'
+      uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # equivalent to `v0.33.1`
+      with:
+        scan-type: ${{ inputs.scan_type }}
+        image-ref: "${{ inputs.image_name }}"
+        severity: "CRITICAL,HIGH"
+        format: "sarif"
+        exit-code: "0"
+        skip-dirs: "tests/"
+        limit-severities-for-sarif: true
+        output: "trivy-results.sarif"
+
+    - name: Upload scan results to GitHub Security tab
+      if: inputs.upload_to_ghas == 'true'
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: "trivy-results.sarif"
