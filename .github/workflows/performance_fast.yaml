@@ -1,4 +1,5 @@
 name: Performance tests (fast)
+permissions: {}
 # Run jobs that send next request immediately after previous returns
 
 on: workflow_dispatch

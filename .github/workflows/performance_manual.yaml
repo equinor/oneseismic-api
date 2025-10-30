@@ -1,4 +1,5 @@
 name: Performance tests (manual)
+permissions: {}
 
 on:
   workflow_dispatch:
