@@ -1,0 +1,40 @@
+name: Docker container scanning
+permissions: {}
+
+on:
+  pull_request:
+  push:
+    branches: [main, radix]
+  workflow_dispatch:
+
+jobs:
+  vulnerability_scanning:
+    name: Trivy test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Load openvds image
+        uses: "./.github/actions/load_openvds_image"
+
+      - name: Build docker image
+        run: |
+          docker build \
+          -f Dockerfile \
+          --build-arg OPENVDS_IMAGE=${{ env.OPENVDS_IMAGE_TAG }} \
+          --tag ${{ github.repository }}/docker-image:${{ github.sha }} \
+          .
+
+      - name: Build container
+        run: docker build -t oneseismic-api:${{ github.sha }} .
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # equivalent to `v0.33.1`
+        with:
+          image-ref: '${{ github.repository }}/docker-image:${{ github.sha }}'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'

@@ -1,4 +1,5 @@
 name: Unit tests
+permissions: {}
 
 on:
   push:

@@ -1,4 +1,5 @@
 name: Template setup for performance tests
+permissions: {}
 
 on:
   workflow_call:

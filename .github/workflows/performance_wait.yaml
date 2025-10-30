@@ -1,4 +1,5 @@
 name: Performance tests (slow)
+permissions: {}
 # Run jobs that wait significant time between receiving response and sending next request
 
 on: workflow_dispatch
