@@ -1,0 +1,70 @@
+name: IaC and container image scans
+permissions: {}
+
+# Reports are uploaded to GitHub Advanced Security if the check was run for the
+# `main` or `radix` branch. In all other cases, the jobs fail if errors are
+# found and the errors are reported in a human-readable format. This is done to
+# avoid cluttering the security panel on GitHub.
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main, radix]
+  workflow_dispatch:
+
+env:
+  UPLOAD_REPORT: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/radix' }}
+
+jobs:
+  iac_file_scan:
+    name: Scan infrastructure-as-code config files
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      security-events: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Scan configuration files
+        uses: "./.github/actions/trivy_scans"
+        with:
+          upload_to_ghas: ${{ env.UPLOAD_REPORT == 'true' }}
+          scan_type: "config"
+
+  container_image_scan:
+    name: Scan Docker image
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: ${{ github.event_name != 'pull_request' }}
+
+    permissions:
+      security-events: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Load openvds image
+        uses: "./.github/actions/load_openvds_image"
+
+      - name: Build docker image
+        run: |
+          docker build \
+          -f Dockerfile \
+          --build-arg OPENVDS_IMAGE=${{ env.OPENVDS_IMAGE_TAG }} \
+          --tag ${{ github.repository }}/docker-image:${{ github.sha }} \
+          --target=runner \
+          .
+
+      - name: Scan Docker image
+        uses: "./.github/actions/trivy_scans"
+        with:
+          upload_to_ghas: ${{ env.UPLOAD_REPORT == 'true' }}
+          scan_type: "image"
+          image_name: "${{ github.repository }}/docker-image:${{ github.sha }}"

@@ -1,4 +1,5 @@
 name: Memory tests
+permissions: {}
 
 on:
   push:
