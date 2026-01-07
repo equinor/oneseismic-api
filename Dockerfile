@@ -19,6 +19,9 @@ WORKDIR /
 RUN git clone --depth 1 --branch ${OPENVDS_VERSION} https://community.opengroup.org/osdu/platform/domain-data-mgmt-services/seismic/open-vds.git
 WORKDIR /open-vds
 
+# https://community.opengroup.org/osdu/platform/domain-data-mgmt-services/seismic/open-vds/-/commit/8d7cb05e2a3dd6f8737c7bb474f7f7d251f2f259
+ARG CMAKE_POLICY_VERSION_MINIMUM=3.5
+
 # for performance reasons open-vds should be build and run with new openssl
 # libssl is installed on alpine by default and would be used during runtime
 
