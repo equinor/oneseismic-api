@@ -20,7 +20,7 @@ runs:
       if: inputs.upload_to_ghas != 'true'
       # Using SHA to pin to latest version as Trivy is a third party tool.
       # Dependabot will up the version when there are new releases if enabled.
-      uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # equivalent to `v0.33.1`
+      uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # equivalent to `v0.35.0`
       with:
         scan-type: ${{ inputs.scan_type }}
         image-ref: "${{ inputs.image_name }}"
@@ -33,7 +33,7 @@ runs:
 
     - name: Run Trivy vulnerability Scanner (upload report to GitHub security)
       if: inputs.upload_to_ghas == 'true'
-      uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # equivalent to `v0.33.1`
+      uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # equivalent to `v0.35.0`
       with:
         scan-type: ${{ inputs.scan_type }}
         image-ref: "${{ inputs.image_name }}"
