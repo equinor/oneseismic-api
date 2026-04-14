@@ -1,6 +1,6 @@
 module github.com/equinor/oneseismic-api
 
-go 1.24.0
+go 1.26.0
 
 require (
 	github.com/Azure/azure-sdk-for-go/sdk/storage/azblob v1.6.3
