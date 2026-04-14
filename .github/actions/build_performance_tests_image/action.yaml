@@ -6,18 +6,18 @@ runs:
 
   steps:
   - name: Checkout
-    uses: actions/checkout@v4
+    uses: actions/checkout@v6
   - name: Set up Docker Buildx
-    uses: docker/setup-buildx-action@v3
+    uses: docker/setup-buildx-action@v4
   - name: Build and push
-    uses: docker/build-push-action@v5
+    uses: docker/build-push-action@v7
     with:
       context: .
       file: ./tests/performance/Dockerfile
       tags: performance_tests:latest
       outputs: type=docker,dest=/tmp/performance_tests.tar
   - name: Upload artifact
-    uses: actions/upload-artifact@v4
+    uses: actions/upload-artifact@v7
     with:
       name: performance_tests
       path: /tmp/performance_tests.tar
