@@ -2,7 +2,7 @@
 ARG OPENVDS_IMAGE=openvdsdebug
 FROM ${OPENVDS_IMAGE} AS openvds
 
-FROM python:3.11-alpine@sha256:25976e9d34a0fab1f278cae931f34c8303d97bf0c0d7f85b6b4dcf641d7702a4
+FROM python:3.14-alpine@sha256:26730869004e2b9c4b9ad09cab8625e81d256d1ce97e72df5520e806b1709f92
 
 RUN apk --no-cache add \
     valgrind \
