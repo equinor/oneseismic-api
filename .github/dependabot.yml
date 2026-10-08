@@ -2,7 +2,9 @@
 version: 2
 updates:
   - package-ecosystem: "github-actions"
-    directory: "/"
+    directories:
+      - "/"
+      - "/.github/actions/*"
     schedule:
       interval: "quarterly"
     groups:
@@ -17,7 +19,7 @@ updates:
     schedule:
       interval: "quarterly"
     allow:
-      - dependency-type: "direct"
+      - dependency-type: "all"
     groups:
       go-deps:
         patterns:
